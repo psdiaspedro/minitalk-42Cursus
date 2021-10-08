@@ -14,7 +14,7 @@ int	main(int argc, char **argv)
 	else
 	{
 		pid = ft_atoi(argv[1]);
-		kill(pid, "oi");
+		kill(pid, SIGUSR1);
 	}
 	return (0);
 }
