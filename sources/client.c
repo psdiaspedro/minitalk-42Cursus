@@ -8,12 +8,17 @@ int	main(int argc, char **argv)
 
 	if (argc != 3)
 	{
-		ft_printf("Error\n");
+		ft_printf("Por favor, escreva no formato: ./client + PID + Mensagem\n");
 		return (1);
 	}
 	else
 	{
 		pid = ft_atoi(argv[1]);
+		if (pid <= 1)
+		{
+			ft_printf("Valor do PID invalido");
+			return (1);
+		}
 		kill(pid, SIGUSR1);
 	}
 	return (0);
