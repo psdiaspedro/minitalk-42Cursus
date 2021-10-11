@@ -1,38 +1,51 @@
 #include "../include/minitalk.h"
 # include <stdio.h>
 
-void send_char (int pid, unsigned char byte)
+void handler(int signum)
 {
-	//verificar bit
-	int i;
-	int mask;
-
-
-	i = 0;
-	mask = 1;
-	while (i < 8)
+	if (signum == SIGUSR1)
 	{
-		if (byte & mask)
-			kill(pid, SIGUSR1);
-		else
-			kill(pid, SIGUSR2);
-		mask << 1;
-		i++;
+		ft_printf("signal recived\n");
+		exit(0);
 	}
 }
 
-void send_message(pid_t pid, char *string)
+void	decimal_conversion(char ascii, int power, int pid)
 {
-	int i;
-	char letra;
+	if (power > 0)
+		decimal_conversion(ascii / 2, power - 1, pid);
+	if ((ascii % 2) == 1)
+	{
+		if (kill(pid, SIGUSR1) != 0)
+		{
+			ft_printf("Error signal!\n");
+			exit(0);
+		}
+	}
+	else
+	{
+		if (kill(pid, SIGUSR2) != 0)
+		{
+			ft_printf("Error signal!\n");
+			exit(0);
+		}
+	}
+	usleep(1000);
+}
+
+int	send_message(int server_pid, char *msg)
+{
+	int		i;
 
 	i = 0;
-	while (string[i] != '\0')
+	while (msg[i] != '\0')
 	{
-		send_char (pid, string[i]);
+		decimal_conversion(msg[i], 7, server_pid);
 		i++;
 	}
-	send_char (pid, string[i])
+	decimal_conversion('\n', 7, server_pid);
+	decimal_conversion(msg[i], 7, server_pid);
+	return (0);
 }
 
 int	main(int argc, char **argv)
@@ -44,15 +57,15 @@ int	main(int argc, char **argv)
 		ft_printf("Por favor, escreva no formato: ./client + PID + Mensagem\n");
 		return (1);
 	}
-	else
+	pid = ft_atoi(argv[1]);
+	if (pid <= 1)
 	{
-		pid = ft_atoi(argv[1]);
-		if (pid <= 1)
-		{
-			ft_printf("Valor do PID invalido");
-			return (1);
-		}
-		send_message(pid, argv[2]);
+		ft_printf("Valor do PID invalido");
+		return (1);
 	}
+	signal(SIGUSR1, handler);
+	send_message(pid, argv[2]);
+	while(1)
+		pause();
 	return (0);
 }

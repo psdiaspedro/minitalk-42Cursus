@@ -1,34 +1,32 @@
 #include "../include/minitalk.h"
 
-void my_handler(int signum, siginfo_t *info, void *ucontext)
+void receive_message(int signum, siginfo_t *siginfo, void *unused)
 {
-	(void)ucontext;
-    if (signum == SIGUSR1)
-	{
-        ft_printf("Received SIGUSR1!\n");
-		//ft_printf("Client PID: %d\n", info->si_pid);
-	}
-	if (signum == SIGUSR2)
-	{
-        ft_printf("Received SIGUSR2!\n");
-		//ft_printf("Client PID: %d\n", info->si_pid);
-	}
+	static int	ascii = 0;
+	static int	power = 0;
 
+	(void)unused;
+	if (signum == SIGUSR1)
+		ascii += 1 << (7 - power);
+	power += 1;
+	if (power == 8)
+	{
+		ft_printf("%c", ascii);
+		power = 0;
+		if (ascii == '\0')
+			if (kill(siginfo->si_pid, SIGUSR1) == -1)
+				ft_printf("Error signal\n");
+		ascii = 0;
+	}
 }
 
 int	main(void)
 {
 	struct sigaction act;
-	//sigset_t mask_set;
 	pid_t	pid;
 
-	// sigemptyset(&mask_set);
-	// sigaddset(&mask_set, SIGTSTP);
-	// sigaddset(&mask_set, SIGINT);
-	act.sa_handler = NULL;
 	act.sa_flags = SA_SIGINFO;
-	//act.sa_mask = mask_set;
-	act.sa_sigaction = my_handler;
+	act.sa_sigaction = receive_message;
 	pid = getpid();
 	ft_printf("Esse é o PID: %d\n", pid);
 	sigaction(SIGUSR1, &act, NULL);
@@ -40,7 +38,6 @@ int	main(void)
 
 /*
 	struct sigaction {
-		void *sa_handler -> ponteiro para a função de manipulação
 		void *sa_sigaction -> um ponteiro para a função de manipulação (habilitada com SA_SIGINFO)
 		int sa_flags -> SA_SIGINFO (habilita a configuração do sa_sigaction)
 		sigset_t sa_mask;
@@ -49,11 +46,6 @@ int	main(void)
 
 /*
 	struct siginfo_t {
-		int si_signo -> singal number (ex: SIGUSR1)
-		int si_errno -> an errno value
-		int si_code -> signal code
 		pid_t si_pid -> sending processes ID -> IMPORTANTE
-		uid_t si_uid -> real user ID of sending process
-		int si_status -> ext value or signal
 	}
 */
