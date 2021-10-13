@@ -30,7 +30,7 @@ void	decimal_conversion(unsigned char ascii, int power, int pid)
 			exit(0);
 		}
 	}
-	usleep(250);
+	usleep(2500);
 }
 
 int	send_message(int server_pid, char *msg)
