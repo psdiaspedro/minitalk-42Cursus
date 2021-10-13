@@ -9,13 +9,13 @@ void receive_message(int signum, siginfo_t *siginfo, void *unused)
 	if (signum == SIGUSR1)
 		ascii += 1 << (7 - power);
 	power += 1;
+	kill(siginfo->si_pid, SIGUSR1);
 	if (power == 8)
 	{
 		ft_printf("%c", ascii);
+		if(ascii == '\0')
+			kill(siginfo->si_pid, SIGUSR2);
 		power = 0;
-		if (ascii == '\0')
-			if (kill(siginfo->si_pid, SIGUSR1) == -1)
-				ft_printf("Error signal\n");
 		ascii = 0;
 	}
 }

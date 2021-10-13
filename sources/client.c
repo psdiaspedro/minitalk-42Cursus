@@ -4,9 +4,11 @@
 void handler(int signum)
 {
 	if (signum == SIGUSR1)
+		ft_printf("signal recived\n");
+	if (signum == SIGUSR2)
 	{
 		ft_printf("signal recived\n");
-		exit(0);
+		exit (0);
 	}
 }
 
@@ -64,6 +66,7 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	signal(SIGUSR1, handler);
+	signal(SIGUSR2, handler);
 	send_message(pid, argv[2]);
 	while(1)
 		pause();
