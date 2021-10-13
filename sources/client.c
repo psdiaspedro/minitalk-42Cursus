@@ -10,7 +10,7 @@ void handler(int signum)
 	}
 }
 
-void	decimal_conversion(char ascii, int power, int pid)
+void	decimal_conversion(unsigned char ascii, int power, int pid)
 {
 	if (power > 0)
 		decimal_conversion(ascii / 2, power - 1, pid);
@@ -30,7 +30,7 @@ void	decimal_conversion(char ascii, int power, int pid)
 			exit(0);
 		}
 	}
-	usleep(1000);
+	usleep(250);
 }
 
 int	send_message(int server_pid, char *msg)
@@ -44,7 +44,7 @@ int	send_message(int server_pid, char *msg)
 		i++;
 	}
 	decimal_conversion('\n', 7, server_pid);
-	decimal_conversion(msg[i], 7, server_pid);
+	decimal_conversion((unsigned char)msg[i], 7, server_pid);
 	return (0);
 }
 
