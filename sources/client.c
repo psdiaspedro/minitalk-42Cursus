@@ -6,7 +6,7 @@ static void	handle(int sig, siginfo_t *siginfo, void *context)
 	(void)context;
 	if (sig == SIGUSR1)
 	{
-		ft_printf("Message Recived Successfully\n");
+		ft_printf("Message Recieved Successfully\n");
 		exit(0);
 	}
 }
