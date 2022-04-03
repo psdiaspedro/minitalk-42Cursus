@@ -37,7 +37,8 @@ static void	recive_message(int sig, siginfo_t *siginfo, void *context)
 int	main(void)
 {
 	struct sigaction	act;
-
+	
+	sigemptyset(&act.sa_mask);
 	act.sa_flags = SA_SIGINFO;
 	act.sa_sigaction = recive_message;
 	sigaction(SIGUSR1, &act, NULL);
